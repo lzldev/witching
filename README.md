@@ -1,3 +1,3 @@
-# nodets-template
+# Node File Watcher
 
-My personal template for node projects.
+name:tbd
