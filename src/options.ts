@@ -36,7 +36,7 @@ const EventOption = new Option('-e <EVENTS>,--events <EVENTS>', '').choices(
 const InteractiveOption = new Option('--interactive')
 
 const SilentOption = new Option(
-  '-s ,--silent',
+  '-s,--silent',
   'Runs commands without displaying output',
 )
 
@@ -45,4 +45,16 @@ const IgnoreOption = new Option(
   'every file matching the pattern will be ignored',
 )
 
-export { EventOption, InteractiveOption, SilentOption, IgnoreOption }
+//TODO: change the help
+const AggregateEventsOption = new Option(
+  '-a,--no-aggregate',
+  'Let events run more than once per file on watcher pool',
+)
+
+export {
+  EventOption,
+  InteractiveOption,
+  SilentOption,
+  IgnoreOption,
+  AggregateEventsOption,
+}
