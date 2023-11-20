@@ -43,7 +43,12 @@ const IgnoreOption = new Option(
   'every file matching the pattern will be ignored',
 )
 
-//TODO: change the help
+
+const ShellOption = new Option(
+  '--shell <SHELL_CMD>',
+  'every file matching the pattern will be ignored',
+)
+
 const AggregateEventsOption = new Option(
   '-a,--no-aggregate',
   'Let events run more than once per file on watcher pool',
@@ -57,5 +62,6 @@ export {
   SilentOption,
   IgnoreOption,
   AggregateEventsOption,
+  ShellOption,
   PipeOption,
 }

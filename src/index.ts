@@ -6,6 +6,7 @@ import {
   EventOption,
   IgnoreOption,
   InteractiveOption,
+  ShellOption,
   SilentOption,
 } from './options'
 
@@ -40,11 +41,12 @@ const app = new Command()
     '<COMMAND>',
     'Command on file change\n % is going to be replaced with the file name',
   )
-  .addOption(IgnoreOption)
-  .addOption(EventOption)
-  .addOption(SilentOption)
-  .addOption(InteractiveOption)
   .addOption(AggregateEventsOption)
+  .addOption(SilentOption)
+  .addOption(IgnoreOption)
+  .addOption(InteractiveOption)
+  .addOption(EventOption)
+  .addOption(ShellOption)
 
 app.parse()
 
@@ -118,6 +120,7 @@ async function main() {
     dir,
     async (err, events) => {
       if (lock) {
+        process.env['NODE_ENV'] === 'development' && l(chalk.red(`PARCEL CALLBACK [LOCKED]`));
         return
       }
 
@@ -159,6 +162,7 @@ async function main() {
           stdin: options.interactive ? process.stdin : undefined,
           stdout: options.silent ? undefined : process.stdout,
           stderr: process.stderr,
+          shell: options.shell ?? process.env.SHELL ?? undefined,
         }).catch((err) => {
           l(`Error Running: ${chalk.green(cmd_str)}\n`, chalk.red(err))
         })
