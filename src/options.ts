@@ -16,8 +16,6 @@ const BackendOption = new Option(
   '-b <backend> ,--backend <backend>',
   'parcel watcher backend',
 ).choices(BackendChoices)
-  
-
 */
 
 /* 
@@ -51,10 +49,13 @@ const AggregateEventsOption = new Option(
   'Let events run more than once per file on watcher pool',
 )
 
+const PipeOption = new Option('-p,--pipe', 'pipe file into command')
+
 export {
   EventOption,
   InteractiveOption,
   SilentOption,
   IgnoreOption,
   AggregateEventsOption,
+  PipeOption,
 }
