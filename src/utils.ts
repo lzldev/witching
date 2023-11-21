@@ -36,4 +36,79 @@ function templateHelp(
   return ret
 }
 
-export { getParcelFiles, writeRed, templateHelp }
+const preHeader = ' '
+const postHeader = '\n'
+const headerDivider = ' : '
+
+function drawHeader(header: Record<string, any>, logger = console.log) {
+  const msg = Object.entries(header)
+    .filter(([_, value]) => !!value)
+    .map(
+      ([k, v]) =>
+        preHeader +
+        chalk.whiteBright(k) +
+        headerDivider +
+        v.toString() +
+        postHeader,
+    )
+
+  logger.call(undefined, ...msg)
+}
+
+function watchingAnimation() {
+  const stdout = process.stdout
+  const m = Math.min
+
+  let direction = -1
+  let position = 0
+
+  let columns = stdout.columns
+  let wasLocked = true
+
+  const padder = ' '
+  const watcher = '🧙‍♀️'
+
+  const render = () => {
+    console.log(
+      watcher
+        .padStart(columns / 2 - watcher.length, padder)
+        .padEnd(columns, padder),
+      watcher.padStart(position, padder).padEnd(columns, padder),
+    )
+  }
+
+  const fly = (locked: boolean) => {
+    wasLocked = wasLocked || locked
+
+    if (locked) {
+      return
+    }
+
+    if (position === 0) {
+      direction = 1
+    } else if (position >= columns - 1) {
+      direction = -1
+    }
+
+    columns = stdout.columns
+    position = m(position + direction, columns)
+
+    if (!wasLocked) {
+      stdout.moveCursor(0, -2)
+      stdout.clearScreenDown()
+      render()
+    } else {
+      render()
+      wasLocked = false
+    }
+  }
+
+  fly.clear = () => {
+    stdout.moveCursor(0, -2)
+    stdout.clearScreenDown()
+  }
+
+  return fly
+}
+
+export { getParcelFiles, writeRed, templateHelp, drawHeader, watchingAnimation }
