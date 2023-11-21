@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 import { version } from '../package.json'
 import { Command } from '@commander-js/extra-typings'
-import { drawHeader, getParcelFiles, templateHelp, writeRed } from './utils'
+import {
+  drawHeader,
+  getParcelFiles,
+  templateHelp,
+  watchingAnimation,
+  writeRed,
+} from './utils'
 import {
   AggregateEventsOption,
   EventOption,
@@ -94,9 +100,13 @@ async function main() {
     timeouts: [],
   }
 
-  if (process.stdin.isTTY) {
+  if (process.stdin.isTTY && !options.silent) {
     registerHotkeys(AppConfig, AppState)
   }
+
+  const animation = watchingAnimation()
+
+  AppState.timeouts.push(setInterval(() => animation(AppState.lock), 100))
 
   const watcher = await parcel.subscribe(
     dir,

@@ -70,10 +70,8 @@ function watchingAnimation() {
 
   const render = () => {
     console.log(
-      watcher
-        .padStart(columns / 2 - watcher.length, padder)
-        .padEnd(columns, padder),
-      watcher.padStart(position, padder).padEnd(columns, padder),
+      `Watching...\n`,
+      watcher.padStart(position, padder).padEnd(columns - 1, padder),
     )
   }
 
