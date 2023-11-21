@@ -27,9 +27,10 @@ export const EventChoices = ['create', 'update', 'delete'] as const
 export type EventChoices = typeof EventChoices
 export type EventChoice = (typeof EventChoices)[number]
 
-const EventOption = new Option('-e <EVENTS>,--events <EVENTS>', '').choices(
-  EventChoices,
-)
+const EventOption = new Option(
+  '-e <EVENTS...>,--events <EVENTS...>',
+  'only run command on select events',
+).choices(EventChoices)
 
 const InteractiveOption = new Option('--interactive')
 
@@ -43,11 +44,7 @@ const IgnoreOption = new Option(
   'every file matching the pattern will be ignored',
 )
 
-
-const ShellOption = new Option(
-  '--shell <SHELL_CMD>',
-  'every file matching the pattern will be ignored',
-)
+const ShellOption = new Option('--shell <SHELL_CMD>', 'which shell to use')
 
 const AggregateEventsOption = new Option(
   '-a,--no-aggregate',
