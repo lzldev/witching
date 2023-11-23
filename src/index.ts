@@ -4,10 +4,11 @@ import { Command } from '@commander-js/extra-typings'
 import {
   drawHeader,
   getParcelFiles,
+  localLogger,
   templateHelp,
-  watchingAnimation,
   writeRed,
 } from './utils'
+
 import {
   AggregateEventsOption,
   EventOption,
@@ -28,7 +29,7 @@ import { commandMsg, dirMsg, errorMsg, eventMsg } from './colors'
 const hotkeysHelp = templateHelp`
 ${['? / h', 'Show This help']}
 ${['c', 'List Files']}
-${['q', 'quit :c']}
+${['q', 'Close APP']}
 `
 
 type AppState = {
@@ -65,6 +66,7 @@ const app = new Command()
   .addOption(EventOption)
 
 app.parse()
+
 const options = app.opts()
 
 const l =
@@ -91,7 +93,7 @@ async function main() {
       stderr: process.stderr,
       shell: options.shell ?? process.env.SHELL ?? undefined,
     },
-    ignorePaths: options.i ? [options.i] : null,
+    ignorePaths: options.i ? options.i : null,
     spinner: options.silent ? ora() : null,
   } as const
 
@@ -104,9 +106,12 @@ async function main() {
     registerHotkeys(AppConfig, AppState)
   }
 
-  const animation = watchingAnimation()
-
-  AppState.timeouts.push(setInterval(() => animation(AppState.lock), 100))
+  drawHeader({
+    Watching: dirMsg(AppConfig.dir),
+    Command: commandMsg(AppConfig.command),
+    events: options.e,
+    ignored: options.i,
+  })
 
   const watcher = await parcel.subscribe(
     dir,
@@ -116,10 +121,21 @@ async function main() {
         return
       }
 
-      AppState.lock = true
-
       for (const ev of events) {
         const cmd_str = command.replace('%', ev.path)
+
+        if (options.e && !options.e.includes(ev.type)) {
+          drawHeader(
+            {
+              'IGNORED EVENT': chalk.bgRed(
+                chalk.whiteBright(` ${ev.type.toUpperCase()} `),
+              ),
+              FILE: !options.pipe && dirMsg(ev.path),
+            },
+            l,
+          )
+          continue
+        }
 
         drawHeader(
           {
@@ -162,15 +178,15 @@ async function main() {
   })
 }
 
-await main()
+await main().catch((e) => {
+  app.error(e)
+})
 
 function registerHotkeys(AppConfig: AppConfig, AppState: { lock: boolean }) {
-  l(`STDIN.isTTY ${chalk.magentaBright(process.stdin.isTTY)}`)
   process.stdin.setRawMode(true)
 
   const hotkeys: Record<string | number, Function> = {
     q: () => {
-      console.log('something i guess')
       process.exit(1)
     },
     c: async () => {
@@ -189,10 +205,7 @@ function registerHotkeys(AppConfig: AppConfig, AppState: { lock: boolean }) {
 
   process.stdin.on('data', async (data) => {
     const input = data.toString('ascii')
-    console.log(input)
 
-    l(`STDINDATA:[${chalk.bgMagentaBright(input)}]`)
-    l(`RAW_BUFFER:[${chalk.greenBright(Array.from(data.values()))}]`)
     ;(hotkeys[input] && hotkeys[input]?.call(undefined, [])) ||
       (data.at(-1) !== undefined &&
         hotkeys[data.at(-1)!] &&

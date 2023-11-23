@@ -52,7 +52,7 @@ function drawHeader(header: Record<string, any>, logger = console.log) {
         postHeader,
     )
 
-  logger.call(undefined, ...msg)
+  logger.call(undefined, '', ...msg)
 }
 
 function watchingAnimation() {
@@ -75,10 +75,18 @@ function watchingAnimation() {
     )
   }
 
-  const fly = (locked: boolean) => {
-    wasLocked = wasLocked || locked
+  const clear = () => {
+    if (wasLocked) {
+      return
+    }
+    stdout.moveCursor(0, -2)
+    stdout.clearScreenDown()
+  }
 
+  const fly = (locked: boolean) => {
     if (locked) {
+      clear()
+      wasLocked = true
       return
     }
 
@@ -91,22 +99,31 @@ function watchingAnimation() {
     columns = stdout.columns
     position = m(position + direction, columns)
 
-    if (!wasLocked) {
-      stdout.moveCursor(0, -2)
-      stdout.clearScreenDown()
-      render()
-    } else {
-      render()
-      wasLocked = false
-    }
+    clear()
+    render()
+
+    wasLocked = false
   }
 
-  fly.clear = () => {
-    stdout.moveCursor(0, -2)
-    stdout.clearScreenDown()
-  }
-
-  return fly
+  return { fly, clear }
 }
 
-export { getParcelFiles, writeRed, templateHelp, drawHeader, watchingAnimation }
+function localLogger() {
+  let current = { value: '' }
+
+  const log = (...values: string[]) =>
+    values.forEach((s) => {
+      current.value += s
+    })
+
+  return { current, log }
+}
+
+export {
+  getParcelFiles,
+  writeRed,
+  templateHelp,
+  drawHeader,
+  watchingAnimation,
+  localLogger,
+}

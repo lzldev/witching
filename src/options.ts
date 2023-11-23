@@ -22,7 +22,6 @@ const BackendOption = new Option(
 @parcel/watcher EventType
   EventType :  'create' | 'update' | 'delete';
 */
-
 export const EventChoices = ['create', 'update', 'delete'] as const
 
 export type EventChoices = typeof EventChoices
@@ -30,26 +29,26 @@ export type EventChoice = (typeof EventChoices)[number]
 
 const EventOption = new Option(
   '-e <EVENTS...>,--events <EVENTS...>',
-  'select which events to run commands on DEFAULT: all',
+  'only run command on select events',
 ).choices(EventChoices)
 
 const InteractiveOption = new Option('--interactive')
 
 const SilentOption = new Option(
   '-s,--silent',
-  'run commands without the output',
+  'Runs commands without displaying output',
 )
 
 const IgnoreOption = new Option(
-  '-i <GLOB>,--ignore <GLOB>',
+  '-i <GLOB>,--ignore <GLOBS>',
   'every file matching the pattern will be ignored',
 )
 
-const ShellOption = new Option('--shell <SHELL>', 'path to shell executable')
+const ShellOption = new Option('--shell <SHELL_CMD>', 'which shell to use')
 
 const AggregateEventsOption = new Option(
   '-a,--no-aggregate',
-  'run command even o repeated events',
+  'Let events run more than once per file on watcher pool',
 )
 
 const PipeOption = new Option('-p,--pipe', 'pipe file into command')

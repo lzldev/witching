@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 
-export const dirMsg = (...msg: any[]) => chalk.magentaBright(msg)
+export const dirMsg = (...msg: any[]) => chalk.cyanBright(msg)
 export const commandMsg = (...msg: any[]) => chalk.greenBright(msg)
 
 const errorPrefix = chalk.bgWhiteBright(chalk.redBright('Error:'))
