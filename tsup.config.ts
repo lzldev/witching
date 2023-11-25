@@ -6,8 +6,8 @@ export default defineConfig({
   clean: true,
   entry: ['src/index.ts'],
   format: ['esm'],
-  target: 'node20',
-  skipNodeModulesBundle: true,
+  target: 'node2020',
+  minify: !isDev,
   outDir: 'dist',
   onSuccess: isDev ? 'node dist/index.js' : undefined,
 })

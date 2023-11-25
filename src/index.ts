@@ -93,7 +93,7 @@ async function main() {
       stderr: process.stderr,
       shell: options.shell ?? process.env.SHELL ?? undefined,
     },
-    ignorePaths: options.i ? options.i : null,
+    ignorePaths: options.i ? [options.i] : null,
     spinner: options.silent ? ora() : null,
   } as const
 
@@ -178,10 +178,6 @@ async function main() {
   })
 }
 
-await main().catch((e) => {
-  app.error(e)
-})
-
 function registerHotkeys(AppConfig: AppConfig, AppState: { lock: boolean }) {
   process.stdin.setRawMode(true)
 
@@ -212,3 +208,7 @@ function registerHotkeys(AppConfig: AppConfig, AppState: { lock: boolean }) {
         hotkeys[data.at(-1)!]?.call(undefined, []))
   })
 }
+
+await main().catch((e) => {
+  app.error(e)
+})

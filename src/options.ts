@@ -1,28 +1,11 @@
 import { Option } from '@commander-js/extra-typings'
+import { EventType } from '@parcel/watcher'
 
-/* 
-@parcel/watcher Parcel BackendType
-  export type BackendType =
-    | 'fs-events'
-    | 'watchman'
-    | 'inotify'
-    | 'windows'
-    | 'brute-force';
-TODO: i should probably remove this . at least hide it from the --help
-const BackendChoices = ['tbd', 'tbd1', 'tbd2'] as const
-export type BackendChoices = typeof BackendChoices
-export type BackendChoice = (typeof BackendChoices)[number]
-const BackendOption = new Option(
-  '-b <backend> ,--backend <backend>',
-  'parcel watcher backend',
-).choices(BackendChoices)
-*/
-
-/* 
-@parcel/watcher EventType
-  EventType :  'create' | 'update' | 'delete';
-*/
-export const EventChoices = ['create', 'update', 'delete'] as const
+export const EventChoices = [
+  'create',
+  'update',
+  'delete',
+] as const satisfies EventType[]
 
 export type EventChoices = typeof EventChoices
 export type EventChoice = (typeof EventChoices)[number]
