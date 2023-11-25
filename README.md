@@ -1,6 +1,7 @@
 # Witching
 
 <img src="https://img.shields.io/github/license/lzldev/witching" alt="License">
+<img src="https://img.shields.io/npm/v/witching" alt="npm version">
 
 File System Watcher CLI
 
