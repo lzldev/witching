@@ -1,13 +1,7 @@
 #!/usr/bin/env node
 import { version } from '../package.json'
 import { Command } from '@commander-js/extra-typings'
-import {
-  drawHeader,
-  getParcelFiles,
-  localLogger,
-  templateHelp,
-  writeRed,
-} from './utils'
+import { drawHeader, getParcelFiles, templateHelp, writeRed } from './utils'
 
 import {
   AggregateEventsOption,
@@ -25,9 +19,11 @@ import chalk from 'chalk'
 import parcel from '@parcel/watcher'
 import ora, { Ora } from 'ora'
 import { commandMsg, dirMsg, errorMsg, eventMsg } from './colors'
+import { open } from 'fs/promises'
 
 const hotkeysHelp = templateHelp`
 ${['? / h', 'Show This help']}
+${['r', 'clear screen']}
 ${['c', 'List Files']}
 ${['q', 'Close APP']}
 `
@@ -152,6 +148,9 @@ async function main() {
 
         await execa(cmd_str, {
           ...AppConfig.commandOptions,
+          stdin: options.pipe
+            ? (await open(ev.path)).createReadStream()
+            : AppConfig.commandOptions.stdin,
         }).catch((err) => {
           l(`Error Running: ${chalk.green(cmd_str)}\n`, chalk.red(err))
         })
@@ -189,7 +188,11 @@ function registerHotkeys(AppConfig: AppConfig, AppState: { lock: boolean }) {
       const files = await getParcelFiles(
         AppConfig.dir,
         AppConfig.ignorePaths ?? [],
-      )
+      ).catch((e) => {
+        l(errorMsg(e))
+
+        return []
+      })
       l(chalk.whiteBright('WATCHED FILES:'), files, `\nN: ${files.length}`)
     },
     r: () => console.clear(),
